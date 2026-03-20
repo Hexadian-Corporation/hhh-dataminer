@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+.env
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# VS Code Copilot local instruction files (only track copilot.instructions.md)
+.github/instructions/*
+!.github/instructions/copilot.instructions.md
+!.github/instructions/development-workflow.instructions.md
+!.github/instructions/bug-history.instructions.md
+!.github/instructions/gh-workflow.instructions.md

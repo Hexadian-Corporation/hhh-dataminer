@@ -1,0 +1,9 @@
+name: PR Title
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  pr-title:
+    uses: Hexadian-Corporation/.github/.github/workflows/pr-title-reusable.yml@main

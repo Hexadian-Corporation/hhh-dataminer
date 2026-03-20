@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - name: Check linting
+        run: uv run ruff check .
+      - name: Check formatting
+        run: uv run ruff format --check .
+
+  test:
+    name: Tests & Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - name: Run tests with coverage
+        run: uv run pytest --cov=src --cov-report=xml --cov-report=term-missing
+      - name: Check coverage on changed lines
+        run: uv run diff-cover coverage.xml --compare-branch=origin/main --fail-under=90
+
+  copilot-fix:
+    name: Request Copilot Fix
+    needs: [lint, test]
+    if: failure()
+    uses: Hexadian-Corporation/.github/.github/workflows/copilot-fix-reusable.yml@main
+    with:
+      stack: python

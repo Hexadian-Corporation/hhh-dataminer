@@ -1,0 +1,12 @@
+name: Auto-status
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, ready_for_review, converted_to_draft, closed]
+
+jobs:
+  auto-status:
+    uses: Hexadian-Corporation/.github/.github/workflows/auto-status-reusable.yml@main
+    secrets:
+      PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
