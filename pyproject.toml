@@ -17,9 +17,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3",
+    "pytest-asyncio>=0.25",
     "pytest-cov>=6.0",
     "diff-cover>=9.0",
     "ruff>=0.9",
+    "respx>=0.22",
 ]
 
 [build-system]
@@ -38,6 +40,7 @@ select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
 
 [tool.coverage.run]
 source = ["src"]
