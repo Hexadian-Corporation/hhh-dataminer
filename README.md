@@ -6,7 +6,7 @@ Game data mining and import orchestration service for **H³ – Hexadian Hauling
 
 ## Domain
 
-Automates the extraction of Star Citizen game data (locations, distances, ships, commodities, contracts) from external sources (UEX Corp API) and orchestrates bulk imports into the H³ backend services.
+Mines Star Citizen game data (locations, distances, ships, commodities, contracts) from **multiple external sources**, automatically **merges** the results, and orchestrates bulk imports into the H³ backend services.
 
 ## Stack
 
@@ -67,7 +67,6 @@ uv run hhh up
 | `HHH_DATAMINER_SHIPS_SERVICE_URL` | `http://localhost:8002` | Ships service URL |
 | `HHH_DATAMINER_COMMODITIES_SERVICE_URL` | `http://localhost:8007` | Commodities service URL |
 | `HHH_DATAMINER_CONTRACTS_SERVICE_URL` | `http://localhost:8001` | Contracts service URL |
-| `HHH_DATAMINER_UEX_API_BASE_URL` | `https://uexcorp.space/api/2.0` | UEX Corp API base URL |
 | `HEXADIAN_AUTH_JWT_SECRET` | `change-me-in-production` | Shared secret for JWT signature verification |
 
 ## API
@@ -100,6 +99,6 @@ src/
     └── adapters/
         ├── inbound/api/             # FastAPI router, DTOs
         └── outbound/
-            ├── uex/                 # UEX Corp API adapter (DataSourcePort)
+            ├── sources/             # Data source adapters (one per source, each implements DataSourcePort)
             └── hhh/                 # HHH services HTTP client (ImportPort)
 ```

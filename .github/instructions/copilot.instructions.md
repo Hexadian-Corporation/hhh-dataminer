@@ -14,7 +14,7 @@
 
 **H³ (Hexadian Hauling Helper)** is a Star Citizen companion app for managing hauling contracts, owned by **Hexadian Corporation** (GitHub org: `Hexadian-Corporation`).
 
-This service **mines game data from external sources** (UEX Corp API) and **orchestrates bulk imports** into the H³ backend services (maps, ships, commodities, contracts).
+This service **mines game data from multiple external sources**, **merges** the results, and **orchestrates bulk imports** into the H³ backend services (maps, ships, commodities, contracts).
 
 - **Repo:** `Hexadian-Corporation/hhh-dataminer`
 - **Port:** 8008
@@ -40,7 +40,7 @@ src/
     └── adapters/
         ├── inbound/api/             # FastAPI router, DTOs
         └── outbound/
-            ├── uex/                 # UEX Corp API adapter (DataSourcePort)
+            ├── sources/             # Data source adapters (one per source, each implements DataSourcePort)
             └── hhh/                 # HHH services HTTP client (ImportPort)
 ```
 
@@ -49,4 +49,4 @@ src/
 - DTOs at the API boundary are **Pydantic BaseModel** subclasses
 - DI uses **opyoid** (`Module`, `Injector`, `SingletonScope`)
 - External API calls use **httpx** (async-compatible HTTP client)
-- Hexagonal architecture: DataSourcePort (outbound) fetches from UEX, ImportPort (outbound) pushes to HHH services
+- Hexagonal architecture: DataSourcePort (outbound) fetches from external sources, MergeService merges multi-source data, ImportPort (outbound) pushes to HHH services
