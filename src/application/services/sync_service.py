@@ -46,9 +46,7 @@ class SyncService:
         """
         locations_result = await self.sync_entity(EntityType.LOCATIONS)
         remaining = [e for e in EntityType if e != EntityType.LOCATIONS]
-        other_results = await asyncio.gather(
-            *[self.sync_entity(entity) for entity in remaining]
-        )
+        other_results = await asyncio.gather(*[self.sync_entity(entity) for entity in remaining])
         return [locations_result] + list(other_results)
 
     async def sync_entity(self, entity: EntityType) -> SyncResult:
@@ -70,9 +68,7 @@ class SyncService:
     # Private helpers — one per entity type
     # ------------------------------------------------------------------
 
-    async def _guarded(
-        self, source: DataSourcePort, coro: Coroutine[Any, Any, _T]
-    ) -> _T:
+    async def _guarded(self, source: DataSourcePort, coro: Coroutine[Any, Any, _T]) -> _T:
         """Await *coro* while holding the per-source concurrency-limit semaphore."""
         async with self._semaphores[id(source)]:
             return await coro

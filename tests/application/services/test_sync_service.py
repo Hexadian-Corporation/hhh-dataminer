@@ -323,8 +323,6 @@ async def test_semaphore_limits_concurrent_source_requests() -> None:
 
     # Drive _SEMAPHORE_LIMIT + 2 concurrent calls through the same source
     over_limit = _SEMAPHORE_LIMIT + 2
-    await asyncio.gather(
-        *[service._guarded(source, source.fetch_ships()) for _ in range(over_limit)]
-    )
+    await asyncio.gather(*[service._guarded(source, source.fetch_ships()) for _ in range(over_limit)])
 
     assert max_concurrent <= _SEMAPHORE_LIMIT
