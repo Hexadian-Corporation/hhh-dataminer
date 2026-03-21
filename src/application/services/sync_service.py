@@ -1,8 +1,12 @@
+import logging
 from dataclasses import dataclass
 
 from src.application.ports.data_source_port import DataSourcePort
 from src.application.ports.import_port import ImportPort
 from src.domain.models import Commodity, Contract, Distance, EntityType, Location, Ship
+from src.domain.services.hierarchy_validator import HierarchyValidator
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -14,9 +18,15 @@ class SyncResult:
 class SyncService:
     """Orchestrates the fetch → merge → import pipeline for all entity types."""
 
-    def __init__(self, sources: list[DataSourcePort], import_adapter: ImportPort) -> None:
+    def __init__(
+        self,
+        sources: list[DataSourcePort],
+        import_adapter: ImportPort,
+        hierarchy_validator: HierarchyValidator | None = None,
+    ) -> None:
         self._sources = sources
         self._import = import_adapter
+        self._hierarchy_validator = hierarchy_validator or HierarchyValidator()
 
     async def sync_all(self) -> list[SyncResult]:
         """Run a full sync for every entity type and return per-entity results."""
@@ -49,7 +59,28 @@ class SyncService:
         for source in self._sources:
             for loc in await source.fetch_locations():
                 merged[loc.id] = loc
-        return await self._import.import_locations(list(merged.values()))
+        locations = list(merged.values())
+        count = await self._import.import_locations(locations)
+
+        report = self._hierarchy_validator.validate(locations)
+        if report.is_valid:
+            logger.info("✅ Hierarchy valid (%d locations)", report.total_locations)
+        else:
+            logger.warning(
+                "⚠️ Hierarchy issues found: %d errors, %d warnings",
+                len(report.errors),
+                len(report.warnings),
+            )
+            for issue in report.issues:
+                logger.log(
+                    logging.ERROR if issue.severity == "ERROR" else logging.WARNING,
+                    "  - [%s] %s: %s",
+                    issue.severity,
+                    issue.rule,
+                    issue.message,
+                )
+
+        return count
 
     async def _sync_distances(self) -> int:
         merged: dict[tuple[str, str], Distance] = {}

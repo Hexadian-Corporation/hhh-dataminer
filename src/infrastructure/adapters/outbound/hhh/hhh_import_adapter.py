@@ -13,7 +13,10 @@ class HhhImportAdapter(ImportPort):
         self._client = http_client
 
     async def import_locations(self, locations: list[Location]) -> int:
-        payload = [{"id": loc.id, "name": loc.name, "type": loc.type, "system": loc.system} for loc in locations]
+        payload = [
+            {"id": loc.id, "name": loc.name, "type": loc.type, "system": loc.system, "parent_id": loc.parent_id}
+            for loc in locations
+        ]
         await self._post(f"{self._settings.maps_service_url}/locations/bulk", payload)
         return len(locations)
 
