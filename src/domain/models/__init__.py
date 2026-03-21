@@ -4,6 +4,7 @@ from src.domain.models.distance import Distance
 from src.domain.models.entity_type import EntityType
 from src.domain.models.location import Location
 from src.domain.models.ship import Ship
+from src.domain.models.validation_report import ValidationIssue, ValidationReport
 
 __all__ = [
     "Commodity",
@@ -12,4 +13,6 @@ __all__ = [
     "EntityType",
     "Location",
     "Ship",
+    "ValidationIssue",
+    "ValidationReport",
 ]

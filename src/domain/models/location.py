@@ -7,3 +7,4 @@ class Location:
     name: str
     type: str
     system: str | None = None
+    parent_id: str | None = None
